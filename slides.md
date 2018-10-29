@@ -64,10 +64,9 @@ notes: Crazy high density, highly scaleable
 
 *Results in consistently developed [Ansible](https://docs.ansible.com) roles*
 
-Molecule provides support testing with multiple instances, operating systems and distributions, virtualization providers, test frameworks and testing scenarios. Molecule is opinionated in order to encourage an approach that results in consistently developed roles that are well-written, easily understood and maintained.
+Molecule provides support testing with multiple instances, operating systems, distributions, virtualization providers, test frameworks and testing scenarios. Molecule is opinionated in order to encourage an approach that results in consistently developed roles that are well-written, easily understood and maintained.
 
-Providers can be bare-metal, virtual, cloud or containers. If Ansible can use it, Molecule can test it. Molecule simply leverages Ansible’s module system to manage instances.
-
+Providers can be bare-metal, virtual, cloud or containers. *Molecule simply leverages Ansible’s module system to manage instances.*
 
 notes: Molecule leverages Ansible provider modules in a consistent way. Currently supports azure,  docker, ec2, gce, lxc, lxd, openstack, vagrant and a customizable provider (delegated) for others. Minimal learning curve
 
@@ -87,48 +86,66 @@ notes: On it's own ZFS is a very large learning curve. Hidden behind LXD, not di
 
 ## Virtualization
 
-Although this stack allows us to deploy to both virtual and physical (bare-metal) systems a lot of folks have mentioned that we could use some more information on virtualization and containers in particular. So I am going to squeeze a quick overview in right here and hopefully some folks who have hands on experiences specific implementations of virtualization can give us a hand with some of the nitty gritty details a little bit later on.
+### Some Advantages
+
+* high density
+* Better use of resources
+* Lots of choices
 
 ----
 
-### Types of Virtualization
+## Major types of Virtualization
 
-A long time ago, in a galaxy far far away, in the early 70's some computer person mused that one could have two basic types of virtualization, *Type 1* and *Type 2*. These days a lot of folks talk about a lot of other kinds of virtualization but we are going to stick with two, or perhaps three if required.
+* Type 1 - Native (Bare Metal)
+* Type 2 - Hosted
+* Type C - Container
 
-#### Type 1 - Hardware Virtualization - Generally Virtual Machines
+----
 
-* A virtual machine that acts like a real computer with an operating system.
-* Software executed on these virtual machines is separated from the underlying hardware resources.
+## Type 1
 
-...So a Windows system can host an Ubuntu VM
+Native (Bare Metal)
 
-Some examples might include:
+```shell
+Hardware <--> Hypervisor <--> Hosted OS
+```
+
+#### Examples:
+
+* VMware
+* Xen
+
+----
+
+#### Type 2 - Hosted
+
+```shell
+Hardware <--> Host OS <--> Hypervisor <--> hosted OS
+```
+
+#### Examples:
 
 * KVM
 * VirtualBox
-* VMware
 
-#### Type 2 - Kernel Sharing Trickery
+----
 
+#### Type C - Shared host kernel
+
+Operating-system-level virtualization, also known as containerization, refers to an operating system feature in which the kernel allows the existence of multiple isolated user-space instances. Such instances, called containers,[1] partitions, virtual environments (VEs) or jails (FreeBSD jail or chroot jail), may look like real computers from the point of view of programs running in them. A computer program running on an ordinary operating system can see all resources (connected devices, files and folders, 
+
+
+```shell
+             _ Hypervisor
+
+            /      |
+HW -- OS -<        |
+
+            \ ____ Hosted OS/App/ Service
+
+```
+
+#### Examples
+
+* Linux System Containers LXC.
 * Docker
-* Linux Containers (LXC / LXD)
-* Other "Container" like systems
-
-#### Type 
-
-
-## Type 1 Virtualization
-
-Most people refer to *Type 1* virtualization as VM's or Virtual Machines.
-
-Properties of Virtual Machines include the following:
-
-Each VM has:
-
-* It's own operating system.
-* It's own software.
-* Allows for the hosting of many systems on a single host.
-* Can be much slower than the host system.
-* Large.
-* Requires a lot of resources from the host.
-* Requires a VM' host application.
