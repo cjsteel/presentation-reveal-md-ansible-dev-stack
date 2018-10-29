@@ -5,22 +5,25 @@ revealOptions:
     transition: 'fade'
 ---
 
-## An Interesting Ansible Development Stack
+## An Ansible Development Stack
 
-One Implementation of an Ansible Orchestration Development Stack that leverages old *magical* powers.
+One Implementation of an Ansible Orchestration Development Stack that leverages some now and old *magical* powers.
+
+Christopher Steel, 2018
 
 Note: I love this stack, other might want to consider another implementation of this highly flexible stack or may want to borrow some of the underlying ideas for other interesting projects.
 
----
+----
 
-## A Word About Magic...
+## By magic we mean...
 
 *"technology sufficiently advanced is indistinguishable from magic"*
 
 Arthur C. Clarke'a Third Law
 
-* No rabbits, sorry.
-* But we may see some *COW*'s.
+* So, no rabbits
+* You may see some *COW*'s
+* Some kernel tricks
 
 ----
 
@@ -33,7 +36,7 @@ Arthur C. Clarke'a Third Law
 
 Note: Ansible requires Python and SSH
 
-----
+---
 
 ## Ansible
 
@@ -88,27 +91,49 @@ notes: On it's own ZFS is a very large learning curve. Hidden behind LXD, not di
 
 ### Some Advantages
 
-* high density
-* Better use of resources
-* Lots of choices
+* Higher density
+* More effective use of resources
+* Lots and lots of choices
 
 ----
 
-## Major types of Virtualization
+## Major types of Virtualization (Hypevisors)
 
 * Type 1 - Native (Bare Metal)
 * Type 2 - Hosted
-* Type C - Container
+* Type C - Operating-system-level virtualization (Containerization)
 
+The distiction between hypervisor types is not always clear...
+
+Note: Type C is not an "official" type.
 ----
 
-## Type 1
+### Type 1
 
 Native (Bare Metal)
 
 ```shell
 Hardware <--> Hypervisor <--> Hosted OS
 ```
+
+Note: * bare metal hypervisors
+* Run directly on host's hardware
+* Controls the hardware
+* Manage guest operating systems
+* Examples of first hypervisors
+  * IBM developed in the 1960s
+    * native hypervisors.
+      * test software SIMMON
+      * CP/CMS operating system (the predecessor of IBM's z/VM)
+* Modern equivalents
+  * AntsleOs[5]
+  * Xen
+  * XCP-ng
+  * Oracle VM Server for SPARC
+  * Oracle VM Server for x86
+  * Microsoft Hyper-V
+  * Xbox One system software
+  * VMware ESX/ESXi
 
 #### Examples:
 
@@ -117,10 +142,10 @@ Hardware <--> Hypervisor <--> Hosted OS
 
 ----
 
-#### Type 2 - Hosted
+### Type 2 - Hosted
 
 ```shell
-Hardware <--> Host OS <--> Hypervisor <--> hosted OS
+Hardware <--> Host OS <--> Hypervisor <--> Hosted OS
 ```
 
 #### Examples:
@@ -128,24 +153,50 @@ Hardware <--> Host OS <--> Hypervisor <--> hosted OS
 * KVM
 * VirtualBox
 
+Note: These hypervisors run on a conventional operating system (OS) just as other computer programs do.
+* guest operating system runs as a process on the host
+* Abstracts guest OS from the host OS
+* Examples:
+  * VMware Workstation
+  * VMware Player
+  * VirtualBox
+  * Parallels Desktop for Mac
+  * QEMU
+
+
 ----
 
-#### Type C - Shared host kernel
+### Type C
 
-Operating-system-level virtualization, also known as containerization, refers to an operating system feature in which the kernel allows the existence of multiple isolated user-space instances. Such instances, called containers,[1] partitions, virtual environments (VEs) or jails (FreeBSD jail or chroot jail), may look like real computers from the point of view of programs running in them. A computer program running on an ordinary operating system can see all resources (connected devices, files and folders, 
+Operating-system-level virtualization, AKA. Containerization,
 
+* kernel allows the existence of multiple isolated user-space instances:
+
+  * Containers
+  * Jails and chroot jails
+  * Partitions
+  * Virtual environments
+
+----
+
+### Type C
+
+Instances look like real computers from the point of view of programs running in them.
 
 ```shell
-             _ Hypervisor
+              _ Hypervisor
 
-            /      |
-HW -- OS -<        |
+            /       |
+HW -- OS -<         |
 
-            \ ____ Hosted OS/App/ Service
+            \ ____ Hosted Instance (OS / App / Service...)
 
 ```
 
 #### Examples
 
-* Linux System Containers LXC.
 * Docker
+* LXC (Linux System Containers)    
+
+----
+
