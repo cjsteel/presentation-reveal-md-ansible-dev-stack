@@ -7,7 +7,7 @@ revealOptions:
 
 ## An Ansible Development Stack
 
-One Implementation of an Ansible Orchestration Development Stack that leverages some now and old *magical* powers.
+One Implementation of an Ansible Orchestration Development Stack that leverages some new and old *magical* powers.
 
 Christopher Steel, 2018
 
@@ -15,7 +15,7 @@ Note: I love this stack, other might want to consider another implementation of 
 
 ----
 
-## By magic we mean...
+### Not exactly magic but...
 
 *"technology sufficiently advanced is indistinguishable from magic"*
 
@@ -25,20 +25,20 @@ Arthur C. Clarke'a Third Law
 * You may see some *COW*'s
 * Some kernel tricks
 
-----
+---
 
 ## Stack Overview
 
 * Ansible
-* LXC / LXD
+* *LXC / LXD*
 * Molecule
 * *OpenZFS*
 
 Note: Ansible requires Python and SSH
 
----
+----
 
-## Ansible
+### Ansible
 
 An opensource automation engine
 
@@ -46,17 +46,16 @@ An opensource automation engine
 * Provisioning and Configuration management
 * Application deployment and Intra-service orchestration.
 * Modules in abundance made using any language.
-* No agent required
+* No agents required
 
 ----
 
 ## LXC and LXD
 
-Linux System Containers
+Linux *System* Containers
 
-* Run as fast as bare metal (2% slower).
+* As fast as bare metal (2% slower).
 * Ultralight hypervisor
-* Uses kernel security features.
 * Well considered CLI / REST API.
 
 notes: Crazy high density, highly scaleable
@@ -65,13 +64,18 @@ notes: Crazy high density, highly scaleable
 
 ## Molecule
 
-*Results in consistently developed [Ansible](https://docs.ansible.com) roles*
-
-Molecule provides support testing with multiple instances, operating systems, distributions, virtualization providers, test frameworks and testing scenarios. Molecule is opinionated in order to encourage an approach that results in consistently developed roles that are well-written, easily understood and maintained.
-
-Providers can be bare-metal, virtual, cloud or containers. *Molecule simply leverages Ansible’s module system to manage instances.*
+* Consistently developed roles
+* supports *multiple*:
+  * instances
+  * operating systems
+  * distributions
+  * virtualization providers
+  * test frameworks
+  * testing scenarios.
+  * target nodes (bare-metal, virtual, cloud and/or containers)
 
 notes: Molecule leverages Ansible provider modules in a consistent way. Currently supports azure,  docker, ec2, gce, lxc, lxd, openstack, vagrant and a customizable provider (delegated) for others. Minimal learning curve
+
 
 ----
 
@@ -79,7 +83,7 @@ notes: Molecule leverages Ansible provider modules in a consistent way. Currentl
 
 [OpenZFS](https://en.wikipedia.org/wiki/OpenZFS) acts as both the volume manager and the file system and has some *Magical* properties.
 
-* Copy-on-write (COW) transactional object model.
+* Copy-on-write (*COW*) transactional object model.
 * Continuous integrity checking and automatic repair.
 * lots of other interesting stuff, RAID-Z, Native NFSv4 ACLs...
 
@@ -89,21 +93,21 @@ notes: On it's own ZFS is a very large learning curve. Hidden behind LXD, not di
 
 ## Virtualization
 
-### Some Advantages
+### Advantages
 
+* Isolation
 * Higher density
 * More effective use of resources
-* Lots and lots of choices
+* ...
 
 ----
 
 ## Major types of Virtualization (Hypevisors)
 
-* Type 1 - Native (Bare Metal)
+* Type 1 - Native ( Bare Metal )
 * Type 2 - Hosted
-* Type C - Operating-system-level virtualization (Containerization)
+* Type C - OS level virtualization / Containerization / Catch all...
 
-The distiction between hypervisor types is not always clear...
 
 Note: Type C is not an "official" type.
 ----
@@ -115,6 +119,11 @@ Native (Bare Metal)
 ```shell
 Hardware <--> Hypervisor <--> Hosted OS
 ```
+
+#### Examples:
+
+* VMware
+* Xen
 
 Note: * bare metal hypervisors
 * Run directly on host's hardware
@@ -134,11 +143,6 @@ Note: * bare metal hypervisors
   * Microsoft Hyper-V
   * Xbox One system software
   * VMware ESX/ESXi
-
-#### Examples:
-
-* VMware
-* Xen
 
 ----
 
@@ -168,14 +172,14 @@ Note: These hypervisors run on a conventional operating system (OS) just as othe
 
 ### Type C
 
-Operating-system-level virtualization, AKA. Containerization,
+Operating-system-level virtualization, AKA. Containerization
 
-* kernel allows the existence of multiple isolated user-space instances:
+kernel allows the existence of multiple isolated user-space instances(?)
 
-  * Containers
-  * Jails and chroot jails
-  * Partitions
-  * Virtual environments
+ * Containers
+ * Jails and chroot jails
+ * Partitions(?)
+ * Virtual environments
 
 ----
 
@@ -200,3 +204,17 @@ HW -- OS -<         |
 
 ----
 
+### Containers, Containers, Containers
+
+* Singularity
+* Docker
+* LXC / LXD
+* ...
+
+---
+
+## Choosing virtualization methods
+
+* What are the desired properties?
+* Isolation?
+* ???
