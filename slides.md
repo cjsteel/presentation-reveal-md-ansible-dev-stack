@@ -122,7 +122,7 @@ Hardware <--> Hypervisor <--> Hosted OS
 
 #### Examples:
 
-* VMware
+* VMware ESXi
 * Xen
 
 Note: * bare metal hypervisors
@@ -156,6 +156,7 @@ Hardware <--> Host OS <--> Hypervisor <--> Hosted OS
 
 * KVM
 * VirtualBox
+* VMware Workstation Pro
 
 Note: These hypervisors run on a conventional operating system (OS) just as other computer programs do.
 * guest operating system runs as a process on the host
@@ -174,11 +175,11 @@ Note: These hypervisors run on a conventional operating system (OS) just as othe
 
 Operating-system-level virtualization, AKA. Containerization
 
-kernel allows the existence of multiple isolated user-space instances(?)
+kernel allows the existence of multiple isolated user-space instances.
 
  * Containers
  * Jails and chroot jails
- * Partitions(?)
+ * AIX Workload Partitions (WPARs)
  * Virtual environments
 
 ----
@@ -197,6 +198,8 @@ HW -- OS -<         |
 
 ```
 
+----
+
 #### Examples
 
 * Docker
@@ -204,17 +207,116 @@ HW -- OS -<         |
 
 ----
 
-### Containers, Containers, Containers
+## Containers, Containers, Containers
 
-* Singularity
-* Docker
-* LXC / LXD
-* ...
+Most, but not all, containers are:
 
----
+* Portable (mobility of compute)
+* Fast
+* Light weight
+* Exchange service feature
+
+----
+
+### Choosing
+
+* Popularity
+* Architecture
+* Storage Management
+* Client Tools and Onboarding
+* Image Registry
+* Application Support - microservices, enterprise applications
+* Vendor Support & Ecosystem
+
+----
+
+### Singularity
+
+* Designed for HPC, can run on workstations.
+* Image based containers
+* Users cannot become root inside container (requires root outside container)
+* no root daemon owned processes
+* can import docker containers
+
+----
+
+### Singularity Users
+
+* MCIN users
+* Calcul Quebec / Calcul Canada
+
+----
+
+### Docker
+
+* Designed for isolating apps / microservices from one another.
+* Docker to HPC via Singularity.
+* Use of layers and disabling of persistence results in lower disk IO.
+* Issues using apps that expect cron, ssh, daemons, and logging.
+* uses copy-on-write (CoW) for images and containers.
+
+Note: Docker has been ported to Windows, Docker runs slower than other container systems.
+
+----
+
+### Docker Users
+
+* MCIN users
+* Development and test organizations.
+* Many, many other organizations.
+
+----
+
+### LXC & LXD (container hypervisor)
+
+* Acts like a "normal" OS environment: hostname, IP address, file systems, init.d, SSH access.
+* Nearly as fast as bare metal, parallelism possilbe.
+* Efficiently run one or more multi-process applications.
+* Linux-native, highly stable, reliable and efficient.
+
+----
+
+### Who uses LXC / LXD
+
+* IT Operators / DevOps
+* MCIN
+* Most Canonical Websites
+
+----
 
 ## Choosing virtualization methods
 
 * What are the desired properties?
 * Isolation?
 * ???
+
+---
+
+
+## References
+
+### Comparisons
+
+#### Web pages
+
+* https://robin.io/blog/linux-containers-comparison-lxc-docker/
+* https://robin.io/blog/containers-deep-dive-lxc-vs-docker-comparison/
+
+#### Papers
+
+* Formal Requirements for Virtualizable Third Generation Architectures-10.1.1.141.4815
+* Analysis of Virtualization Technologies for High Performance Computing Environments
+* Performance Evaluation of Container-based Virtualization for High Performance Computing Environments
+* NIST.SP.800-125A-F - Security Recommendations for Hypervisor Deployment
+* VIRTUALIZATION TECHNIQUES & TECHNOLOGIES: STATE-OF-THE-ART
+
+
+#### Presentations
+
+* Biondi1-hypervisors.pdf
+* What place for the containers in the HPC world ?
+* hpc-containers-singularity-advanced
+* Live Migration of Linux Containers
+* Containers for Science Reproducibility and Mobility-hpc-containers-singularity-advanced
+* Streamlining HPC Workloads with Containers   
+* Type C Hypervisors
