@@ -123,7 +123,7 @@ Hardware <--> Hypervisor <--> Hosted OS
 #### Examples:
 
 * VMware ESXi
-* Xen
+* Xen (only type 1 open source)
 
 Note: * bare metal hypervisors
 * Run directly on host's hardware
@@ -143,6 +143,22 @@ Note: * bare metal hypervisors
   * Microsoft Hyper-V
   * Xbox One system software
   * VMware ESX/ESXi
+
+----
+
+#### Advantages of Type 1
+
+* Flexibility
+
+  * Windows hosts (Xen / VMware)
+  * FreeBSD (Xen)
+  * NetBSD (Xen)
+
+* Security implications
+
+  * No host OS
+
+Note: No shared kernel pieces so hypervisor can support non Linux instances.
 
 ----
 
@@ -168,12 +184,19 @@ Note: These hypervisors run on a conventional operating system (OS) just as othe
   * Parallels Desktop for Mac
   * QEMU
 
+----
+
+#### Advantages of Type 2 Virtualization
+
+* Isolation of instances
+* Support for non-linux OS
+* Well understood.
 
 ----
 
 ### Type C
 
-Operating-system-level virtualization, AKA. Containerization
+*Operating-system-level virtualization*, AKA. *Containerization*
 
 kernel allows the existence of multiple isolated user-space instances.
 
@@ -207,32 +230,31 @@ HW -- OS -<         |
 
 ----
 
-## Containers, Containers, Containers
+## About Container
 
-Most, but not all, containers are:
+The right container for the job can have many advantages:
 
 * Portable (mobility of compute)
 * Fast
 * Light weight
-* Exchange service feature
+* Availability of Containers or Images
 
 ----
 
 ### Choosing
 
-* Popularity
-* Architecture
-* Storage Management
-* Client Tools and Onboarding
-* Image Registry
-* Application Support - microservices, enterprise applications
-* Vendor Support & Ecosystem
+* *Usage (microservices? , enterprise applications? somtething else?)*
+* *Architectual Strengths & Weaknesses*
+* User group (Developer - Power User - Researcher - Systems Administration?)
+* Image Registry / Sharing
+* Popularity, Support & Community
 
 ----
 
 ### Singularity
 
-* Designed for HPC, can run on workstations.
+*Designed for HPC*
+
 * Image based containers
 * Users cannot become root inside container (requires root outside container)
 * no root daemon owned processes
@@ -301,6 +323,7 @@ Note: Docker has been ported to Windows, Docker runs slower than other container
 
 * https://robin.io/blog/linux-containers-comparison-lxc-docker/
 * https://robin.io/blog/containers-deep-dive-lxc-vs-docker-comparison/
+* https://www.xenproject.org/users/virtualization.html
 
 #### Papers
 
