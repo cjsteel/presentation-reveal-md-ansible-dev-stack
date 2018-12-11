@@ -1,5 +1,5 @@
 ---
-title: My Presentation
+title: An Automation Development Stack
 theme: night
 revealOptions:
     transition: 'fade'
