@@ -5,15 +5,24 @@ revealOptions:
     transition: 'fade'
 ---
 
-## An Ansible Development Stack
+## An Automation Development Stack
 
-One Implementation of an Ansible Orchestration Development Stack that leverages some new and old *magical* powers.
+One Implementation of an automation and configuration stack that allows users to leverage a complex stack via a *high level of abstraction* in order to reduce complexity.
 
-Christopher Steel, 2018
+Christopher Steel, December 14th, 2018
 
-Note: I love this stack, other might want to consider another implementation of this highly flexible stack or may want to borrow some of the underlying ideas for other interesting projects.
+Note: I love this stack for systems admin/Dev Ops work. Users with different goals might want to modify it.
 
 ----
+
+### Obtaining a *High Level of Abstraction*
+
+In this case obtaining a *High Level of Abstraction*:
+
+* Makes is "easy" to leverages the *magical* powers of some complex technology.
+* Allows for the creation of provider agnostic automation scripts which in turn
+* Leads to standardized automation roles.
+* Likely to increase development velocity, perhaps significantly.
 
 ### Not exactly magic but...
 
@@ -21,19 +30,19 @@ Note: I love this stack, other might want to consider another implementation of 
 
 Arthur C. Clarke'a Third Law
 
-* So, no rabbits
-* Virtual machines and *containers*.
-* Perhaps even some *COW*'s?
+* So, no rabbits, just a software stack,
+* a few Virtual machines and *containers*.
+* and perhaps a *COW* or two.
 
 ---
 
 ## Development Stack Overview
 
-* Ansible
-* *LXC / LXD*
-* Molecule
-* *OpenZFS*
-* VirtualBox (if we have time)
+* Ansible - automation software
+* *LXC / LXD* - container system and hypervisor
+* Molecule - Ansible role development aid
+* *OpenZFS* - Powerful file system and logical volume manager
+* VirtualBox - Opensource Virtual Machine application
 
 Note: Ansible requires Python and SSH
 
@@ -47,7 +56,9 @@ An opensource automation engine
 * Provisioning and Configuration management
 * Application deployment and Intra-service orchestration.
 * Modules in abundance made using any language.
-* No agents required
+* SSH / No agents required
+
+notes: Easy to use, rapid growth, very mature, recently added Molecule
 
 ----
 
@@ -65,7 +76,7 @@ notes: Crazy high density, highly scaleable
 
 ### Molecule
 
-* Consistently developed roles
+* Allows for consistently developed Ansible roles
 * supports *multiple:*
   * instances
   * operating systems
@@ -87,15 +98,16 @@ notes: Molecule leverages Ansible provider modules in a consistent way. Currentl
 * Continuous integrity checking and automatic repair.
 * lots of other interesting stuff, RAID-Z, Native NFSv4 ACLs...
 
-notes: On it's own ZFS is a very large learning curve. Hidden behind LXD, not difficult at all. Scalable to very high storage capacities. and so on.
+notes: On it's own ZFS has a steep learning curve. The LXD hypervisor hides. Also happens to allow for highly scaleable storage and many other bells and whistles.
 
 ----
 
 ### VirtualBox
 
 * Opensource
-* Well known
-* *Universal Cake* like properties - Runs on many OS, Hosts Many OS...
+* Well understood
+* Mature
+* Runs on many OS, able to host many OS...
 
 ---
 
@@ -139,6 +151,7 @@ Notes: Hypervisors have been around a long time in one form or another. Many adv
 * Type C - *OS level virtualization / Containerization / Other*
 
 Note: If you Google "Virtualization Types" your results will very widely and may all be "correct". Type C is not considered to be an "official" virtualization type by some folks. Native (No host OS), Hosted, probably an app, Type C, catch all but generally though of as using parts of the of the host OS kernel...
+
 ----
 
 ### Type 1 - *Native* ("Bare Metal")
@@ -153,10 +166,10 @@ Hardware <--> Hypervisor <--> Hosted OS
 
 ----
 
-####  Type 1 Hypervisor Examples:
+####  Type 1 (Bare Metal) Hypervisor Examples:
 
 * VMware ESXi
-* Xen ( open source -  loads a paravirtualized host operating system)
+* Xen ( open source -  loads it's own paravirtualized host operating system)
 * Xbox One system software
 
 Note: * bare metal hypervisors
@@ -203,21 +216,19 @@ Hardware <--> Host OS <--> Hypervisor <--> Hosted OS
 * The guest operating system runs as a process on the host OS.
 * Abstracts the guest OS from the host OS
 
-Notes:  The distinction between these hypervisor types is not always clear.
+Notes:  The distinction between hypervisor types is not always clear.
 
 ----
 
-#### Examples of Type 2 Hypervisors
+#### Examples of Type 2 (Hosted) Hypervisors
 
 * Docker (Probably belongs here now, used to be Type C.)
 * KVM
 * VirtualBox
 * VMware Workstation Pro
 
-Note: Familiar examples:
-  * VMware Workstation
+Note: Other examples:
   * VMware Player
-  * VirtualBox
   * Parallels Desktop for Mac
   * QEMU
 
@@ -227,25 +238,26 @@ Note: Familiar examples:
 
 * *Isolation* of instances
 * Support for *non-linux OS*
-* Well understood, may be *familiar* to more users.
+* Well understood, *familiar* to more users.
 
 ----
 
 ### Type C Virtualzation
 
-*linux system containers*, *jails* and *chroot jails*, * AIX Workload Partitions* (WPARs) and *virtual environments*.
+Catch all including: *linux system containers*, *jails* and *chroot jails*, * AIX Workload Partitions* (WPARs) and *virtual environments*.
 
 * Diverse, but shared history
 * *May* make use of a hypervisor
 * *May* allow for the existence of multiple isolated user-space instances.
 * May be *recursively virtualizable*
 
-Notes: Again, Type C is not an agreed upon official "type". I look at type C as being Containers and containers predecessors. You may not. Type C - Containers / Catch All might help you remember this less than official category.
+Notes: While Type C is not an agreed upon official "type" people look at type C as being containers and container predecessors. You may not.
+
 ----
 
-### Type C Architectures that use hypervisors
+### Containers, Type C architectures that employ a hypervisors
 
-Instances look like real computers from the point of view of the programs running in them. Type C virtualization making use of a Hypervisor tends to look like this:
+Instances (launched containers) look like real computers from the point of view of the programs running in them. Type C virtualization that makes use of a Hypervisor tends to look like this:
 
 ```shell
               _ Hypervisor*
@@ -257,7 +269,7 @@ HW -- OS -<         |
 
 ```
 
-A hypervisor is computer software, firmware or hardware that creates and runs virtual machines. So not all Type C virtualization takes place using a hypervisor according to this definition.
+A hypervisor is computer software, firmware or hardware that creates and runs virtual machines. Not all Type C virtualization takes place using a hypervisor according to this definition.
 
 Note: I'm not going to outline the architecture for any other Type C virtualization here as we would be here for quire a long time.
 
@@ -272,52 +284,52 @@ Note: I'm not going to outline the architecture for any other Type C virtualizat
 
 ## Containers
 
-Both Type 2 and Type C containers have some really nice features...
+Containers have some really nice features...
 
 * Portable (mobility of compute)
 * Usually Faster than Virtual machines
 * Lighter than Virtual Machines
-* Many others
 
 ----
 
-### Selecting the right container
-
-...but you will want to use the right one for the job at hand.
+### Selecting the right container for the job
 
 * *Usage* (microservice, enterprise application, development, devops, HPC?)
-* *Users* (are you a developer, DevOps, power user - researcher - Systems Admin?)
-* Popularity, *Support* & Community
-* *Architectural Strengths & Weaknesses*
-* *Image/Container Registry* / Sharing
+* *Users* (are you a developer, admin, power user or a researcher?)
+* *Support* & Community, Popularity.
+* *Strengths & Weaknesses*
+* *Sharing containers* - Image/Container Registry
 
 Note: What are the most important features you are looking for?
 
 ----
 
-### Singularity - Super Computer Containers
+### Singularity
 
 *Designed for HPC*
 
 * Can be "run" or executed directly by file name.
-* Image based containers
-* Users cannot become root inside container (requires root outside container)
-* no root daemon owned processes
-* can import docker containers
+* Image based containers.
+* Must be root outside of contianer to become root inside of container.
+* no root daemon owned processes.
+* can import docker containers.
+* Learning curve
 
 Notes: So This information may be dated, perhaps Greg is more up to date regarding Singularity?
+
 ----
 
 #### Singularity Users
 
 * MCIN users
 * Calcul Quebec / Calcul Canada
+* HPC all over the world.
 
 ----
 
 #### Singularity pipline example
 
-After a careful preparation...:
+After (a lot of) careful preparation...:
 
 ```shell
 singularity run --app cat catdog.simg
@@ -327,15 +339,19 @@ Output:
  Meow , this is Cat
 ```
 
-### Docker - Application Containers
+notes: Learning curve, can be shared.
 
-* Designed for *isolating applications* / microservices from one another.
+----
+
+###  Application Containers - Docker
+
+* Designed for *isolating applications*.
 * Docker to *HPC* via Singularity.
 * Use of layers and disabling of persistence results in *lower disk IO*.
-* *Issues* using apps that expect cron, ssh, daemons, and logging.
-* uses copy-on-write (CoW) for images and containers.
+* *Issues* using apps that expect cron, ssh, daemons, logging and other system stuff.
+* Can use copy-on-write (CoW) for images and containers.
 
-Note: Docker has been ported to Windows, Docker runs slower than other container systems.
+Note: Docker has been ported to Windows
 
 ----
 
@@ -349,10 +365,13 @@ Note: Docker has been ported to Windows, Docker runs slower than other container
 
 ### LXC & LXD (Linux System Containers)
 
-* Acts like a "normal" OS environment: hostname, IP address, file systems, init.d, SSH access.
-* Nearly as fast as bare metal, parallelism possible.
-* Efficiently run one or more multi-process applications.
-* Linux-native, highly stable, reliable and efficient.
+* Acts like a *normal OS environment*: hostname, IP address, file systems, init.d, SSH access.
+* Nearly *as fast as bare metal*, parallelism possible.
+* Efficiently run *one or more multi-process applications*.
+* Linux-native, can leverage *CoW* using ZFS backing.
+* Windows (10 with Linux subsystem  enabled) and OSX clients*
+
+Note: Ubuntu on Windows way uses the Linux version of the LXD client..
 
 ----
 
@@ -362,44 +381,61 @@ Note: Docker has been ported to Windows, Docker runs slower than other container
 * MCIN
 * Most Canonical Websites
 
+Note: Not well known but widly deployed for (Canonical) production sites.
+
 ----
 
 #### LXC/LXD usage
 
 * Will will cover this in the next section
 
-### Choosing your container(s) or virtualization method(s)
+----
 
-* Do you have or require root access on your virtualization project?
+### Choosing your virtualization target(s)
+
+* Do you have / require root access on your virtualization project?
 * What will you be virtualizing? An application, many applications, part of a pipeline?
-* Where will your container be running?
+* Host - Where will your container be running?
 * Which OS's will be running on your host and guest systems?
+
+note: When you have a choice.
 
 ---
 
-## Leveraging our Ansible Development Stack
+## Molecule
 
-* Molecule generates provider specific Ansible tasks using Ansible modules.
-* We use **molecule** to generate *provider specific* scenarios.
-* This in turn allows is to create and execute *provider agnostic* Ansible roles.
+ Enables the development of *provider agnostic* Ansible playbooks and roles.
+
+* Includes built in *provider specific Ansible tasks* created using Ansible provider modules.
+* Allows for the creation of *custom providers* when Ansible provider modules are not available.
+
+note: Molecule encourages the development of well tested and portable Ansible roles that are easy to reused.
+
+----
 
 ### molecule init
 
-*molecule init* can be used to create new provider agnostic Ansible roles as well as to create provider specific scenarios. Here are two real world examples of setting up scenarios using Vagrant/VirtulaBox and LXC/LXD for xenial targets (The default target OS for Vagrant and LXD).
+* **molecule init role** is used to create a new *provider agnostic Ansible role* and a default scenario.
+* **molecule init scenario** is used to create additional scenarios for an existing Ansible role.
 
 ```shell
-molecule init scenario -s default -d vagrant -r versions
-molecule init scenario -s lxd -d lxd -r versions
+molecule init role -r myrole
+cd myrole
+rm -R molecule/default
+molecule init scenario -s default -d vagrant -r myrole
+molecule init scenario -s lxd -d lxd -r myrole
 ```
+
+notes: Here I am deleting the default scenario generated by molecule as it is for a docker provider and we use Vagrant/VirtualBox as our default testing as all of our roles are currently tested using Vagrant/VirtualBox.
+
+----
+
 ### Generated files
 
-Other files are created in the **scenario** directory. Lets take a quick peek:
+Generating a **scenario** create a scenario directory and contents. The INSTALL.rst file includes information on any additional requirements molecule has for supporting a particular scenario:
 
 ```shell
 ls -al molecule/default/
-```
-
-```shell
 -rw-r--r-- 1 cjs cjs  260 Dec  5 20:08 INSTALL.rst
 -rw-r--r-- 1 cjs cjs  303 Dec  5 20:23 molecule.yml
 -rw-r--r-- 1 cjs cjs   64 Dec  5 20:08 playbook.yml
@@ -407,43 +443,85 @@ ls -al molecule/default/
 drwxr-xr-x 2 cjs cjs 4096 Dec  5 20:08 tests
 ```
 
+note: this
+
+----
+
 ### molecule.yml
 
-Each scenario created has a corresponding `molecule.yml` file in the scenarios sub directory. The *molecule.yml* is a YAML configuration file that defines a scenario and it's instances. By default a single instance is created called *instance*. You you may want to call it something more meaningful. Lets take a look at the molecule files for scenarios we just created:
+* Each scenario has a **molecule.yml** file.
+* By default a single instance is created called *instance*.
+* You may want to call it something more meaningful.
 
 ```shell
 nano molecule/default/molecule.yml
 nano molecule/lxd/molecule.yml
 ```
 
-### Some stack *Magic* and two new molecule commands.
+----
 
-I prefer vagrant/virtualbox and lxd/lxd based scenarios for my testing. The LXC (Linux System Containers) make use of my host systems kernel and I use ZFS for a back end. ZFS includes *Copy On Write* (COW) so once I have a local copy of the containers base image creating addition instances is very fast and takes up almost no space. LXC containers run about 2% slower than the host OS.
+### molecule create
+
+I use vagrant/virtualbox and lxd/lxd based scenarios for most of my testing. I configured LXC/LXD to be backed with ZFS (as a file). So once I have a local copy of the containers base image when ever **molecule create** is run against an **lxd** scenario it uses *Copy On Write* (COW) to create the instance as I configured LXC/LXD to be backed using  ZFS as a file.
 
 ```shell
-time molecule check  -s lxd # use the provisioner perform a Dry-Run.
-time molecule create -s lxd # create my instance using COW
+# molecule check  -s lxd     # do a dry run
+time molecule create         # create default instance
+time molecule create -s lxd  # create lxd instance (using COW)
 ```
+
+----
 
 ### Other molecule commands
 
 Molecule has a total of 16 high level commands at this time. Here are three:
 
 ```shell
-time molecule converge -s lxd    # use the provisioner to configure the instance(s).
-time molecule create -s lxd      # Use the provisioner to start the instance(s).
-time molecule test -s lxd        # Run all tests...
+time molecule converge -s lxd # configure the instance(s) using role.
+time molecule test -s lxd     # Run all tests...
 ```
 
 Notes: Again, out of the box Molecule supports azure, docker, ec2, gce, lxc, lxd, openstack, vagrant and a customizable provider.
 
-###molecule destroy
+----
+
+### molecule list
 
 ```shell
-test molecule destroy 
+molecule list
 ```
 
+### molecule destroy
 
+```shell
+molecule destroy 
+```
+
+----
+
+## LXC/LXD
+
+Our storage pool
+
+```shell
+lxc storage info lxd
+```
+
+----
+
+### Launching a Test Container
+
+Checking our space usage:
+
+```shell
+lxc storage info lxd
+```
+
+### List our containers
+
+```shell
+lxc list
+```
 
 ## Some Key Points
 
