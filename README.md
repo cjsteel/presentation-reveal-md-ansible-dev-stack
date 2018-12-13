@@ -1,5 +1,9 @@
 # presentation-reveal-md-ansible-dev-stack
 
+## Description
+
+
+
 ## Requirements
 
 * git
@@ -10,3 +14,10 @@
 ```shell
 reveal-md -w slides.md --css css/overide.css
 ```
+
+## Generate PDF
+
+```shell
+reveal-md slides.md --css css/overide.css --print resources/ansible-dev-stack.pdf
+```
+
