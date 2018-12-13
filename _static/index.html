@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>reveal-md</title>
+        <link rel="stylesheet" href="./css/reveal.css">
+        <link rel="stylesheet" href="./css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="./css/highlight/zenburn.css">
+        <link rel="stylesheet" href="./css/print/paper.css" type="text/css" media="print">
+          <link rel="stylesheet" href="./_assets/css/overide.css">
+
+
+    </head>
+    <body>
+
+        <div class="reveal">
+            <div class="slides"><section  data-markdown><script type="text/template">3---
+title: An Automation Development Stack
+theme: night
+revealOptions:
+    transition: 'fade'</script></section><section ><section data-markdown><script type="text/template">
+## An Automation Development Stack
+
+One implementation of an automation and configuration stack that allows users to leverage a complex stack via a *high level of abstraction* .
+
+Christopher Steel, Systems Developer (MCIN)
+December 14th, 2018
+
+<aside class="notes"><p>I love my version of this stack for systems admin/Dev Ops work. Users with different goals might want to modify it. It also makes for a very nice real world example of <em>meta commands</em> for lack of a better word.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Obtaining A *High Level Of Abstraction*
+
+In this case, obtaining a *high level of abstraction*:
+
+* Makes it "easy" to leverage the *magical* powers of some complex technology
+* Allows for the creation of provider agnostic automation scripts which in turn
+* Leads to standardized automation roles
+* Likely to increase development velocity, perhaps significantly
+
+<aside class="notes"><p>Easy to run, somewhat complicated to setup. Understsanding the entire stack is a fairly large investment but not required in order to make use of the stack.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Not exactly magic but...
+
+*"Any sufficiently advanced technology is indistinguishable from magic."*
+
+Arthur C. Clarke's Third Law
+
+* No rabbits, just a software stack and
+* A few virtual machines and *containers* and
+* Perhaps a *COW* or two?!
+</script></section></section><section ><section data-markdown><script type="text/template">
+## The Development Stack
+
+* Ansible - automation software
+* *LXC / LXD* - containers and hypervisor
+* Molecule - Ansible role development aid
+* *OpenZFS* - powerful file system and logical volume manager
+* Vagrant - 
+* VirtualBox - open source virtual machine application
+
+<aside class="notes"><p>FYI: Ansible requires Python and SSH. Thank You John Le!</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Ansible
+
+An open source automation engine
+
+* Easy to [grok](https://en.wikipedia.org/wiki/Grok#In_computer_programmer_culture) SERIOUSLY???
+* Provisioning and configuration management
+* Application deployment and intra-service orchestration
+* Modules in abundance made using any language
+* SSH / No agents required
+
+<aside class="notes"><p>Easy to use, rapid growth, very mature, recently added Molecule</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### LXC and LXD
+
+Linux *System* Containers
+
+* As fast as bare metal (2% slower)
+* Ultralight hypervisor
+* Well considered CLI / REST API
+* *Magical* properties
+
+<aside class="notes"><p>Well kept secret, Crazy high density, scalable, runs Canonical, Interesting HPC solution?</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Molecule
+
+* Allows for consistently developed Ansible roles
+* Supports *multiple:*
+  * instances 
+  * operating systems
+  * distributions
+  * test frameworks
+  * testing scenarios
+  * virtualization providers / target nodes (bare-metal, VMs, cloud(s) and/or containers)
+
+<aside class="notes"><p>Brilliant move, Molecule leverages Ansible provider modules in a consistent way. Currently supports azure, docker, ec2, gce, lxc, lxd, openstack, vagrant and a customizable provider (delegated) for others. Minimal learning curve for Molecule itself, lots of sane defaults.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### OpenZFS
+
+[OpenZFS](https://en.wikipedia.org/wiki/OpenZFS) acts as both a volume manager and a file system it has a few *magical* properties as well.
+
+* Copy-on-write (*COW*) transactional object model
+* Continuous integrity checking and automatic repair
+* Lots of other interesting stuff, RAID-Z, Native NFSv4 ACLs...
+* Ubuntu has a really nice OpenZFS, FreeNAS an appliance version.
+
+<aside class="notes"><p>On it&#39;s own, ZFS has quite a steep learning curve. It also happens to allow for highly scalable storage and many many other bells and whistles. ZFS gave birth to Isilon. We are going to leverage a little known feature that is not safe for production (NSFP).</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### VirtualBox
+
+* Open source
+* Well understood
+* Mature
+* Runs on many OS, able to host many OS...
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Virtualization Overview
+
+Before we get started with the details of this particular development stack, lets take some 3time and talk a bit about virtualization and how to go about choosing the right type of virtualization for your particular project or experiment.
+
+<aside class="notes"><p>You may get to choose virtualization; in other cases, your choices may be limited.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Reasons you might want (or need) to virtualize
+
+* Isolation / security
+* Density / effective use of resources
+* Efficiency and/or speed
+* *Repeatability* and/or portability
+* Required in order to...
+* Other reasons
+
+<aside class="notes"><p>Take a moment to think about the reasons that you want to virtualize. Can you think of any others?</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Hypervisors
+
+What is a Hypervisor? Generally speaking a Hypervisor:
+
+* Allows a physical *host* to operate multiple VMs or containers as *guests*
+* Is *a process* that separates a system's OS and apps from the physical hardware
+* Is *software*, but could be *embedded* software on a chip
+
+<aside class="notes"><p>Hypervisors have been around a long time in one form or another. Many advantages, including enabling more efficient usage of resources  and allowing system administrators and programmers to deploy, host, and debug code without jeopardizing the stability of the host system.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+## Major types of Virtualization (Hypervisors)
+
+* Type 1 - *Native* ( bare metal )
+* Type 2 - *Hosted* ("on top of" OS)
+* Type C - *OS level virtualization / Containerization / Other*
+
+<aside class="notes"><p>If you Google &quot;Virtualization Types&quot;, your results will vary widely and may all be &quot;correct&quot;. Type C is not considered to be an &quot;official&quot; virtualization type by some folks. Native (No host OS), Hosted, probably an app, Type C, catch all but generally thought of as using parts of the of the host OS kernel...</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Type 1 - *Native* ("Bare Metal")
+
+```shell
+Hardware <--> Hypervisor <--> Hosted OS
+```
+
+* Runs directly on the host's hardware
+* Controls the hardware
+* Manages the guest operating system(s)
+</script></section><section data-markdown><script type="text/template">
+####  Type 1 (Bare Metal) Hypervisor Examples:
+
+* VMware ESXi
+* Xen ( open source -  loads it's own paravirtualized host operating system)
+* Xbox One system software
+
+<aside class="notes"><ul>
+<li>bare metal hypervisors</li>
+<li>Examples of first hypervisors<ul>
+<li>IBM developed in the 1960s<ul>
+<li>native hypervisors<ul>
+<li>test software SIMMON</li>
+<li>CP/CMS operating system (the predecessor of IBM&#39;s z/VM)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Modern equivalents<ul>
+<li>AntsleOs</li>
+<li>Xen</li>
+<li>XCP-ng</li>
+<li>Oracle VM Server for SPARC</li>
+<li>Oracle VM Server for x86</li>
+<li>Microsoft Hyper-V</li>
+<li>VMware ESX/ESXi</li>
+</ul>
+</li>
+</ul>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Some special properties of Type 1 Virtualization (Hypervisors)
+
+* Speed and Flexibility?
+
+  * Windows hosts (Xen / VMware)
+  * FreeBSD (Xen)
+  * NetBSD (Xen)
+
+* Security implications
+
+  * No host OS(!)
+  * Probably a full OS on your VM's
+
+<aside class="notes"><p>No shared kernel pieces so hypervisor can support non Linux instances.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Type 2 - *Hosted* Hypervisors
+
+```shell
+Hardware <--> Host OS <--> Hypervisor <--> Hosted OS
+```
+
+* Generally an application that runs on a conventional (host) operating system OS
+* The guest operating system runs as a process on the host OS
+* Abstracts the guest OS from the host OS
+
+<aside class="notes"><p>The distinction between hypervisor types is not always clear.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Type 2 (Hosted) Hypervisor Examples:
+
+* KVM
+* VirtualBox
+* VMware Workstation Pro
+
+<aside class="notes"><p>Other examples:</p>
+<ul>
+<li>VMware Player</li>
+<li>Parallels Desktop for Mac</li>
+<li>QEMU</li>
+</ul>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Some properties of Type 2 Virtualization
+
+* *Isolation* of instances
+* Support for *non-linux OS*
+* Well understood, *familiar* to more users
+</script></section><section data-markdown><script type="text/template">
+### Type C Virtualization
+
+Catch all including: *containers*, *linux system containers*, *jails* and *chroot jails*, *AIX Workload Partitions* (WPARs) and *virtual environments*.
+
+* Diverse but shared history
+* *May* make use of a hypervisor
+* *May* allow for the existence of multiple isolated user-space instances
+* May be *recursively virtualizable*
+
+<aside class="notes"><p>While Type C is not an agreed upon official &quot;type&quot;, people look at type C as being containers and container predecessors. You may not.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Containers, Type C architectures *that employ a hypervisor*
+
+Instances (launched containers) look like real computers from the point of view of the programs running in them.:
+
+```shell
+              _ Hypervisor*
+
+            /       |
+HW -- OS -<         |
+
+            \ ____ Hosted Instance (OS / App / Service...)
+
+```
+
+<aside class="notes"><p>I&#39;m not going to outline the architecture for any other Type C virtualization here as we would be here for quite a long time.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Examples of Type C Virtualization using Hypervisors:
+
+* Docker - Used to be an alternative Hypervisor for using Linux System Containers (*LXC*)
+* LXC (Linux System Containers) - *LXD* is an extension of the LXC hypervisor
+</script></section></section><section ><section data-markdown><script type="text/template">
+## Containers
+
+Containers have some really nice features.
+
+* Usually faster and lighter than virtual machines.
+* Linux support
+</script></section><section data-markdown><script type="text/template">
+### Selecting the right container for the job
+
+* *Usage* (microservice, enterprise application, development, devops, HPC?)
+* *Users* (are you a developer, admin, power user or a researcher?)
+* *Support* & Community, Popularity
+* *Strengths & Weaknesses*
+* *Sharing containers* - Image/Container Registry
+
+<aside class="notes"><p>What are the most important features you are looking for?</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Singularity
+
+*Designed for HPC*
+
+* Can be "run" or executed directly by file name
+* Image-based containers
+* Must be root outside of container to become root inside of container
+* No root daemon owned processes
+* Can import docker containers
+* Learning curve
+
+<aside class="notes"><p>So this information may be dated; perhaps Greg is more up to date regarding Singularity?</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Singularity Users
+
+* MCIN users
+* Calcul Quebec / Calcul Canada
+* HPC all over the world
+</script></section><section data-markdown><script type="text/template">
+#### Singularity Pipeline Example
+
+After (a lot of) careful preparation...:
+
+```shell
+singularity run --app cat catdog.simg
+```
+Output:
+```shell
+ Meow , this is Cat
+```
+
+<aside class="notes"><p>Learning curve, can be shared.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+###  Application Containers - Docker
+
+* Designed for *isolating applications*
+* Docker to *HPC* via Singularity
+* Use of layers and disabling of persistence results in *lower disk IO*
+* *Issues* using apps that expect cron, ssh, daemons, logging and other system stuff
+* Can use copy-on-write (CoW) for images and containers
+
+<aside class="notes"><p>Docker has been ported to Windows.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Docker Users
+
+* MCIN
+* Development and test organizations
+* Many, many others
+</script></section><section data-markdown><script type="text/template">
+### LXC & LXD (Linux System Containers)
+
+* Acts like a *normal OS environment*: hostname, IP address, file systems, init.d, SSH access
+* Nearly *as fast as bare metal*, parallelism possible
+* Efficiently run *one or more multi-process applications*
+* Linux-native, can leverage *CoW* using ZFS backing.
+* Windows (10 with Linux subsystem enabled) and OSX clients*
+
+<aside class="notes"><p>Ubuntu on Windows way uses the Linux version of the LXD client. (NEEDS AUTHOR REVIEW)</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### Who uses LXC / LXD
+
+* IT Operators / DevOps
+* MCIN
+* Most Canonical Websites
+
+<aside class="notes"><p>Not well known but widely deployed for (Canonical) production sites.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+#### LXC/LXD usage
+
+* Will cover this in the next section
+</script></section><section data-markdown><script type="text/template">
+### Choosing your virtualization target(s)
+
+* Do you have / require root access on your virtualization project?
+* What will you be virtualizing? An application, many applications, part of a pipeline?
+* Host - Where will your container be running?
+* Which OSs will be running on your host and guest systems?
+
+<aside class="notes"><p>When you have a choice.</p>
+</aside></script></section></section><section ><section data-markdown><script type="text/template">
+## Molecule
+
+ Enables the development of *provider agnostic* Ansible playbooks and roles.
+
+* Includes built-in *provider specific Ansible tasks* created using Ansible provider modules
+* Allows for the creation of *custom providers* when Ansible provider modules are not available
+
+<aside class="notes"><p>Molecule encourages the development of well-tested and portable Ansible roles that are easy to reuse.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### molecule init
+
+* **molecule init role** is used to create a new *provider agnostic Ansible role* and a default scenario
+* **molecule init scenario** is used to create additional scenarios for an existing Ansible role
+
+```shell
+molecule init role -r myrole
+cd myrole
+rm -R molecule/default
+molecule init scenario -s default -d vagrant -r myrole
+molecule init scenario -s lxd -d lxd -r myrole
+```
+
+<aside class="notes"><p>Here I am deleting the default scenario generated by molecule as it is for a docker provider and we use Vagrant/VirtualBox as our default testing as all of our roles are currently tested using Vagrant/VirtualBox. (NEEDS AUTHOR REVIEW)</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### Generated files
+
+Generating a **scenario** creates a scenario directory and contents. The INSTALL.rst file includes information on any additional requirements molecule has for supporting a particular scenario:
+
+```shell
+ls -al molecule/default/
+-rw-r--r-- 1 cjs cjs  260 Dec  5 20:08 INSTALL.rst
+-rw-r--r-- 1 cjs cjs  303 Dec  5 20:23 molecule.yml
+-rw-r--r-- 1 cjs cjs   64 Dec  5 20:08 playbook.yml
+-rw-r--r-- 1 cjs cjs  235 Dec  5 20:08 prepare.yml
+drwxr-xr-x 2 cjs cjs 4096 Dec  5 20:08 tests
+```
+
+<aside class="notes"><p>this (NEEDS AUTHOR CONFIRMATION)</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### molecule.yml
+
+* Each scenario has a **molecule.yml** file
+* By default, a single instance is created called *instance*
+* You may want to call it something more meaningful
+
+```shell
+nano molecule/default/molecule.yml
+nano molecule/lxd/molecule.yml
+```
+</script></section><section data-markdown><script type="text/template">
+### molecule create
+
+I use vagrant/virtualbox and lxd/lxd-based scenarios for most of my testing. I configured LXC/LXD to be backed with ZFS (as a file). So once I have a local copy of the containers base image when ever **molecule create** is run against an **lxd** scenario it uses *Copy On Write* (COW) to create the instance as I configured LXC/LXD to be backed using  ZFS as a file. (LAST SENTENCE NEEDS SERIOUS AUTHOR REVIEW)
+
+```shell
+# molecule check  -s lxd     # do a dry run
+time molecule create         # create default instance
+time molecule create -s lxd  # create lxd instance (using COW)
+```
+</script></section><section data-markdown><script type="text/template">
+### Other molecule commands
+
+Molecule has a total of 16 high-level commands at this time. Here are three:
+
+```shell
+time molecule converge -s lxd # configure the instance(s) using role.
+time molecule test -s lxd     # Run all tests...
+```
+
+<aside class="notes"><p>Again, out of the box Molecule supports azure, docker, ec2, gce, lxc, lxd, openstack, vagrant and a customizable provider.</p>
+</aside></script></section><section data-markdown><script type="text/template">
+### molecule list
+
+```shell
+molecule list
+```
+
+### molecule destroy
+
+```shell
+molecule destroy 
+```
+</script></section><section data-markdown><script type="text/template">
+## LXC/LXD
+
+Our storage pool
+
+```shell
+lxc storage info lxd
+```
+</script></section><section data-markdown><script type="text/template">
+### Launching a Test Container
+
+Checking our space usage:
+
+```shell
+lxc storage info lxd
+```
+
+### List our containers
+
+```shell
+lxc list
+```
+
+## Some Key Points
+
+* We have learned a lot and we are still learning about our new stack.
+* It makes a lot of things that used to be impractical practical.
+* *High levels of abstraction* rock.
+* Use the right kind of virtualization for the job at hand.
+* For extensive testing, you will want to leverage the fastest appropriate provider driver. (NEEDS AUTHOR REVIEW)
+* Use one or more scenarios per driver depending on your needs.
+
+## In Closing
+
+Raising the level of abstraction makes automation much easier as it hides many levels of complexity. In this stack, this includes:
+
+* LXC and LXD enabling the configuration and leveraging of a ZFS back end.
+* molecule allowing use to ignore provider specifics once the provider and instance is configured. (NEEDS AUTHOR REVIEW)
+
+This in turn:
+
+* Allows us to provisioning to multiple targets. (NEEDS AUTHOR REVIEW)
+* Allows us to develop target agnostic Ansible roles.
+* Enables a significant increase in development velocity.
+
+## References
+
+### Comparisons
+
+#### Web pages
+
+* https://robin.io/blog/linux-containers-comparison-lxc-docker/
+* https://robin.io/blog/containers-deep-dive-lxc-vs-docker-comparison/
+* https://www.xenproject.org/users/virtualization.html
+
+#### Papers
+
+* Formal Requirements for Virtualizable Third Generation Architectures-10.1.1.141.4815
+* Analysis of Virtualization Technologies for High Performance Computing Environments
+* Performance Evaluation of Container-based Virtualization for High Performance Computing Environments
+* NIST.SP.800-125A-F - Security Recommendations for Hypervisor Deployment
+* VIRTUALIZATION TECHNIQUES & TECHNOLOGIES: STATE-OF-THE-ART
+
+
+#### Presentations
+
+##### MCIN
+* http://natacha-beck.github.io/cbrain_docker/#/
+* https://ibis.loris.ca/Presentations/docker.html#/
+
+##### Other
+
+* Biondi1-hypervisors.pdf
+* What place for the containers in the HPC world?
+* hpc-containers-singularity-advanced
+* Live Migration of Linux Containers
+* Containers for Science Reproducibility and Mobility-hpc-containers-singularity-advanced
+* Streamlining HPC Workloads with Containers   
+* Type C Hypervisors
+
+```
+
+```
+</script></section></section></div>
+        </div>
+
+        <script src="./lib/js/head.min.js"></script>
+        <script src="./js/reveal.js"></script>
+
+        <script>
+            function extend() {
+              var target = {};
+              for (var i = 0; i < arguments.length; i++) {
+                var source = arguments[i];
+                for (var key in source) {
+                  if (source.hasOwnProperty(key)) {
+                    target[key] = source[key];
+                  }
+                }
+              }
+              return target;
+            }
+
+            // Optional libraries used to extend on reveal.js
+            var deps = [
+              { src: './lib/js/classList.js', condition: function() { return !document.body.classList; } },
+              { src: './plugin/markdown/marked.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/markdown/markdown.js', condition: function() { return !!document.querySelector('[data-markdown]'); } },
+              { src: './plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+              { src: './plugin/zoom-js/zoom.js', async: true },
+              { src: './plugin/notes/notes.js', async: true },
+              { src: './plugin/math/math.js', async: true }
+            ];
+
+            // default options to init reveal.js
+            var defaultOptions = {
+              controls: true,
+              progress: true,
+              history: true,
+              center: true,
+              transition: 'default', // none/fade/slide/convex/concave/zoom
+              dependencies: deps
+            };
+
+            // options from URL query string
+            var queryOptions = Reveal.getQueryHash() || {};
+
+            var options = {};
+            options = extend(defaultOptions, options, queryOptions);
+        </script>
+
+
+        <script>
+          Reveal.initialize(options);
+        </script>
+    </body>
+</html>
