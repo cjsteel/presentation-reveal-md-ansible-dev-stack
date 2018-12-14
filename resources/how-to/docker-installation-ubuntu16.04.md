@@ -92,6 +92,8 @@ Installing Docker now gives you not just the Docker service (daemon) but also th
 
 ## Step 2 — Executing the Docker Command Without Sudo (Optional)
 
+Sometime Docker configures this for you, other times it does not!
+
 By default, running the `docker` command requires root privileges — that is, you have to prefix the command with `sudo`. It can also be run by a user in the **docker** group, which is automatically created during the installation of Docker. If you attempt to run the `docker` command without prefixing it with `sudo` or without being in the docker group, you'll get an output like this:
 
 ```
@@ -129,3 +131,42 @@ The rest of this article assumes you are running the `docker` command as a user 
 
 
 ## sudo systemctl status docker
+
+## Confirmation and testing
+
+```shell
+docker --version
+```
+
+Output example:
+
+```shell
+Docker version 18.09.0, build 4d60db4
+```
+
+Hello world test
+
+```shell
+docker run hello-world
+```
+
+run ubuntu
+
+```shell
+docker run -it ubuntu bash
+```
+
+list all images
+
+```shell
+docker ps -a
+```
+
+Output example:
+
+```shell
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
+a1b244c5f390        ubuntu              "bash"              3 minutes ago       Exited (0) 2 minutes ago                       clever_northcutt
+7877c7d60c94        hello-world         "/hello"            4 minutes ago       Exited (0) 4 minutes ago                       lucid_ellis
+```
+

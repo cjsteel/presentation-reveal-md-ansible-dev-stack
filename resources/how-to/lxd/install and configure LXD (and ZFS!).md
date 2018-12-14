@@ -129,7 +129,7 @@ lxc launch images:ubuntu/xenial c1
 ## Lets see how much space is used by our new container image:
 
 ```shell
-lxc storage info lxd
+lxc storage info default
 ```
 
 output example:
@@ -138,12 +138,15 @@ output example:
 info:
   description: ""
   driver: zfs
-  name: lxd
-  space used: ?.??GB
-  total space: 17.89GB
+  name: default
+  space used: 243.00MB
+  total space: 76.21GB
 used by:
+  containers:
+  - c1
+  - instance
   images:
-  - 34851ebf08f1c375504b9d83cd037f9cb09ce7ca2d9d0c45b28c98c87b6242e7
+  - 4e4c5fdee2bf468842290b34839cb74ad73338857d1ecbc5b9f81348836abb52
   profiles:
   - default
 ```
@@ -178,24 +181,34 @@ output example:
 info:
   description: ""
   driver: zfs
-  name: lxd
-  space used: ?.??GB
-  total space: 17.89GB
+  name: default
+  space used: 245.76MB
+  total space: 76.21GB
 used by:
   containers:
   - c1
   - c2
+  - instance
   images:
-  - 34851ebf08f1c375504b9d83cd037f9cb09ce7ca2d9d0c45b28c98c87b6242e7
+  - 4e4c5fdee2bf468842290b34839cb74ad73338857d1ecbc5b9f81348836abb52
   profiles:
   - default
 ```
 
-----
+The math
+
+```shell
+245.76 - 243.00 = 2.76
+```
 
 ## List our running Containers
 
 ```shell
+lxc list
+lxc stop c1
+lxc stop c2
+lxc delete c1
+lxc delete c2
 lxc list
 ```
 

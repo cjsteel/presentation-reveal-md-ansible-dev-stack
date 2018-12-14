@@ -107,7 +107,7 @@ sort -r versions.txt | head -n1 | awk '{print "VAGRANT_LATEST_VER="$1}' > latest
 cat latest_vagrant_vesion.txt
 ```
 
-Set var
+Set Vagrant version variable
 
 ```shell
 source latest_vagrant_vesion.txt
@@ -162,20 +162,17 @@ gpg: Can't check signature: No public key
 Import public key
 
 ```shell
-gpg --keyserver pgp.mit.edu --recv-keys 348FFC4C
+gpg2 --keyserver pgp.mit.edu --recv-keys 348FFC4C
 ```
 
 output example:
 
 ```shell
-gpg: requesting key 348FFC4C from hkp server pgp.mit.edu
+gpg: /home/csteel/.gnupg/trustdb.gpg: trustdb created
 gpg: key 348FFC4C: public key "HashiCorp Security <security@hashicorp.com>" imported
-gpg: public key of ultimately trusted key 9B8545CB not found
-gpg: public key of ultimately trusted key ACCA5FE7 not found
-gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
-gpg: depth: 0  valid:   2  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 2u
+gpg: no ultimately trusted keys found
 gpg: Total number processed: 1
-gpg:               imported: 1  (RSA: 1)
+gpg:               imported: 1
 ```
 
 ### verify
@@ -263,12 +260,169 @@ Installed the plugin 'vagrant-vbguest (0.15.2)'!
 
 #### Setup
 
+You will need to do this after installing other vagrant plugins if your target `Vagrantfile` requires them.
+
 ```shell
 vagrant up
 vagrant vbguest --do install
-vagrant reload
+time vagrant reload
+[stretch] GuestAdditions 5.2.22 running --- OK.
+[jessie] GuestAdditions 5.2.22 running --- OK.
+[precise] GuestAdditions 5.2.22 running --- OK.
+
 vagrant vbguest --status
 ```
+
+##### vagrant reload
+
+Confirm that all VM's have been updated with the latest version. 
+
+time to run command on "The Beast" one all of the exceptions outlined below have been taken care of:
+
+```shell
+[centos7] GuestAdditions seems to be installed (5.2.22) correctly, but not running.
+Redirecting to /bin/systemctl start vboxadd.service
+Redirecting to /bin/systemctl start vboxadd-service.service
+==> centos7: Checking for guest additions in VM...
+==> centos7: Setting hostname...
+==> centos7: Configuring and enabling network interfaces...
+==> centos7: Rsyncing folder: /home/csteel/projects/exo/ansible/roles/ensure_dirs/ => /vagrant
+==> centos7: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> centos7: flag to force provisioning. Provisioners marked to run always will still run.
+
+==> stretch: Machine 'stretch' has a post `vagrant up` message. This is a message
+==> stretch: from the creator of the Vagrantfile, and not from Vagrant itself:
+==> stretch: 
+==> stretch: Vanilla Debian box. See https://app.vagrantup.com/debian for help and bug reports
+
+==> jessie: Machine 'jessie' has a post `vagrant up` message. This is a message
+==> jessie: from the creator of the Vagrantfile, and not from Vagrant itself:
+==> jessie: 
+==> jessie: Vanilla Debian box. See https://app.vagrantup.com/debian for help and bug reports
+
+real	7m50.744s
+user	0m28.571s
+sys	0m17.465s
+```
+
+Reloading vagrant (after taking care of Centos6 manual intervention)
+
+```shell
+time vagrant reload
+```
+
+```shell
+time vagrant vbguest --status
+```
+
+Output:
+
+```shell
+[stretch] GuestAdditions 5.2.22 running --- OK.
+[jessie] GuestAdditions 5.2.22 running --- OK.
+[precise] GuestAdditions 5.2.22 running --- OK.
+[trusty] GuestAdditions 5.2.22 running --- OK.
+[xenial] GuestAdditions 5.2.22 running --- OK.
+Got different reports about installed GuestAdditions version:
+Virtualbox on your host claims:   5.2.8
+VBoxService inside the vm claims: 5.2.22
+Going on, assuming VBoxService is correct...
+[bionic] GuestAdditions 5.2.22 running --- OK.
+[centos6] GuestAdditions 5.2.22 running --- OK.
+[centos7] GuestAdditions 5.2.22 running --- OK.
+
+real	0m14.211s
+user	0m4.758s
+sys	0m2.166s
+```
+
+Total Space Used:
+
+```shell
+du -h "$HOME/VirtualBox VMs"
+```
+
+Output:
+
+```shell
+388K	/home/csteel/VirtualBox VMs/ensure_dirs-bionic/Logs
+1.7G	/home/csteel/VirtualBox VMs/ensure_dirs-bionic
+488K	/home/csteel/VirtualBox VMs/ensure_dirs-stretch/Logs
+1.7G	/home/csteel/VirtualBox VMs/ensure_dirs-stretch
+232K	/home/csteel/VirtualBox VMs/ensure_dirs-centos7/Logs
+2.3G	/home/csteel/VirtualBox VMs/ensure_dirs-centos7
+432K	/home/csteel/VirtualBox VMs/ensure_dirs-precise/Logs
+1.3G	/home/csteel/VirtualBox VMs/ensure_dirs-precise
+360K	/home/csteel/VirtualBox VMs/ensure_dirs-centos6/Logs
+2.7G	/home/csteel/VirtualBox VMs/ensure_dirs-centos6
+488K	/home/csteel/VirtualBox VMs/ensure_dirs-jessie/Logs
+1.8G	/home/csteel/VirtualBox VMs/ensure_dirs-jessie
+400K	/home/csteel/VirtualBox VMs/ensure_dirs-xenial/Logs
+1.6G	/home/csteel/VirtualBox VMs/ensure_dirs-xenial
+448K	/home/csteel/VirtualBox VMs/ensure_dirs-trusty/Logs
+1.7G	/home/csteel/VirtualBox VMs/ensure_dirs-trusty
+15G	/home/csteel/VirtualBox VMs
+```
+
+
+
+###### Exceptions
+
+###### bionic
+
+```shell
+==> bionic: Machine booted and ready!
+Got different reports about installed GuestAdditions version:
+Virtualbox on your host claims:   5.2.8
+VBoxService inside the vm claims: 5.2.22
+Going on, assuming VBoxService is correct...
+[bionic] GuestAdditions 5.2.22 running --- OK.
+Got different reports about installed GuestAdditions version:
+Virtualbox on your host claims:   5.2.8
+VBoxService inside the vm claims: 5.2.22
+Going on, assuming VBoxService is correct...
+```
+
+###### centos6 
+
+```shell
+The following SSH command responded with a non-zero exit status.
+Vagrant assumes that this means the command failed!
+
+yum install -y kernel-devel-`uname -r` --enablerepo=C-base --enablerepo=C-updates
+
+Stdout from the command:
+
+Loaded plugins: fastestmirror, security
+
+
+Stderr from the command:
+
+
+
+Error getting repository data for C-base, repository not found
+```
+
+centos6 manual fix
+
+```shell
+vagrant ssh centos6
+sudo yum update -y
+sudo yum install -y kernel-devel-`uname -r`sudo reboot
+sudo reboot
+vagrant vbguest --do install centos6
+```
+
+###### centos7 message
+
+```shell
+An error occurred during installation of VirtualBox Guest Additions 5.2.22. Some functionality may not work as intended.
+In most cases it is OK that the "Window System drivers" installation failed.
+```
+
+
+
+
 
 #### Troubleshooting
 
@@ -278,20 +432,17 @@ Check logs on VM
 cat /var/log/vboxadd-setup.log
 ```
 
-Set path to iso
+Specify a valid path to the *Virtualbox Guest Additions" iso.
 
-ensure for iso with generic name:
+Example:
 
 ```shell
-sudo mkdir ~/sw/virtualbox/5.2.12/
-
-VBoxGuestAdditions_5.2.12.iso
-VBoxGuestAdditions_5.2.12.iso
-sudo chown 0755 /usr/share/virtualbox
-cp ~/.vagrant.d/tmp/VBoxGuestAdditions_5.2.12.iso /usr/share/virtualbox/.
+sudo mkdir ~/resources/sw/ubuntu/16.04/virtualbox/5.2.22
 ```
 
-manually configure path:
+Make sure it is populated
+
+manually configure your iso path in your Vagrantfile:
 
 ```shell
 # -*- mode: ruby -*-
@@ -381,8 +532,6 @@ Vagrant::Config.run do |config|
 end
 ```
 
-
-
 #### testing
 
 ```shell
@@ -395,6 +544,7 @@ vagrant vbguest
 
 #### References
 
+* https://github.com/cjsteel/vagrant-plugin-vai
 * https://github.com/MatthewMi11er/vai
 
 #### Install

@@ -84,11 +84,35 @@ sudo rm -R /usr/share/virtualbox/
 
 ## Download from creator
 
+### UBUNTU - Set release vars
+
+```shell
+source /etc/lsb-release
+```
+
+Confirm
+
+```shell
+echo ${DISTRIB_ID,,}
+echo ${DISTRIB_RELEASE}
+echo ${DISTRIB_CODENAME}
+echo ${DISTRIB_DESCRIPTION}
+```
+
+Output example:
+
+```shell
+Ubuntu
+16.04
+xenial
+Ubuntu 16.04.5 LTS
+```
+
 ### Check for latest stable version
 
 ```shell
-mkdir -p ~/resources/sw/ubuntu/18.04/virtualbox/latest
-cd ~/resources/sw/ubuntu/18.04/virtualbox/latest
+mkdir -p ~/resources/sw/${DISTRIB_ID,,}/${DISTRIB_RELEASE}/virtualbox/latest
+cd ~/resources/sw/${DISTRIB_ID,,}/${DISTRIB_RELEASE}/virtualbox/latest
 wget https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
 ```
 
@@ -139,10 +163,10 @@ Using `resource_filenames` as our source we download the files we want for our t
 
 Ansible scripts will require the distribution and architecture
 
-#### Download the `xenial_amd64.deb` file
+#### Download the `_amd64.deb` file
 
 ```shell
-wget https://download.virtualbox.org/virtualbox/${VBOX_LATEST}/`cat resource_filenames | grep bionic_amd64.deb`
+wget https://download.virtualbox.org/virtualbox/${VBOX_LATEST}/`cat resource_filenames | grep ${DISTRIB_CODENAME}_amd64.deb`
 ```
 
 ### Download the Guest Additions ISO
@@ -193,11 +217,13 @@ virtualbox-5.2_5.2.12-122591~Ubuntu~xenial_amd64.deb: OK
 
 ## Installation
 
+
+
 ### Install VirtualBox
 
 ```shell
-sudo dpkg -i `cat resource_filenames | grep bionic_amd64.deb`
-apt-get install -f
+sudo dpkg -i `cat resource_filenames | grep ${$DISTRIB_CODENAME}_amd64.deb`
+sudo apt-get install -f
 ```
 
 ### Install Guest Additions ISO
@@ -252,7 +278,7 @@ wget http://download.virtualbox.org/virtualbox/$var1/$file -O /tmp/$file
 sudo VBoxManage extpack install /tmp/$file --replace
 ```
 
-## Test
+## Confirm and Test
 
 ```shell
 vboxmanage -v
@@ -263,6 +289,10 @@ Output example:
 ```shell
 5.2.22r126460
 ```
+
+Restart system
+
+Test VirtualBox
 
 
 
