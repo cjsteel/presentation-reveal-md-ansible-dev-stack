@@ -267,7 +267,6 @@ Note: I'm not going to outline the architecture for any other Type C virtualizat
 
 ## Containers
 
-
 ----
 
 ### Selecting the right container for the job
@@ -433,32 +432,96 @@ Note: Docker scenarios include a default Docker file
 * By default, a single instance is created called *instance*
 * You may want to call it something more meaningful
 
+Lets have a peek at our `molecule.yml` files
+
 ```shell
-nano molecule/default/molecule.yml
-nano molecule/lxd/molecule.yml
+cat molecule/default/molecule.yml | more
+cat molecule/lxd/molecule.yml | more
 ```
 
 ----
 
-### molecule create
+#### vagrant default scenario `molecule/default/molecule.yml` customisation example
+
+```yaml
+...
+platforms:
+  - name: myrole-xenial
+    box: ubuntu/xenial64
+    groups:
+      - linux
+    cpus: 2
+    memory: 4096
+    instance_raw_config_args:
+      - "vm.network 'forwarded_port', guest: 80, host: 1080"
+      - "vm.network 'forwarded_port', guest: 443, host: 1443"
+      - "vm.network 'private_network', ip: '192.168.33.10'"
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+    options:
+      exclude:
+        - .git
+        - .vagrant
+        - .molecule
+        - venv
+      x: ["ANSIBLE0012,ANSIBLE0013"]
+scenario:
+  name: default
+...
+```
+
+note:  We have added some lint exclusions and other customisation to our Vagrant controlled VirtualBox VM
+
+----
+
+#### lxd scenario `molecule/lxd/molecule.yml` customisation example
+
+```yaml
+...
+platforms:
+  - name: myrole-xenial
+    source:
+      alias: ubuntu/xenial/amd64
+    profiles:
+      - default
+    force_stop: false
+...
+```
+
+----
+
+### `molecule check` and `molecule create`
 
 I prefer LXC/LXD scenarios for testing as it works no matter what I am deploying and leverages the superpowers of ZFS.
 
 ```shell
-# molecule check  -s lxd     # do a dry run
-time molecule create         # create default instance
-time molecule create -s lxd  # create lxd instance (using COW)
+molecule check -s lxd       # do a dry run
+time molecule create -s lxd # create any lxd scenario instance(s)
+```
+
+Output:
+
+```shell
+    PLAY RECAP *********************************************************************
+    myrole-xenial              : ok=1    changed=0    unreachable=0    failed=0
+
+real	1m23.251s
+user	0m13.296s
+sys	0m3.572s
 ```
 
 ----
 
 ### Other molecule commands
 
-Currently Molecule has a total of 16 high-level commands. Here are three:
+Currently Molecule has a total of 16 high-level commands. Here are three more:
 
 ```shell
-time molecule converge -s lxd # configure the instance(s) using role.
-time molecule test -s lxd     # Run all tests...
+time molecule converge -s lxd
+time molecule test -s lxd
+time molecule lint -s lxd
 ```
 
 Notes: Again, out of the box Molecule supports azure, docker, ec2, gce, lxc, lxd, openstack, vagrant and a customizable provider.
@@ -480,14 +543,14 @@ molecule list
 Use the provisioner to destroy the instances.
 
 ```shell
-molecule destroy 
+molecule destroy -s lxd 
 ```
 
 ---
 
-## LXC/LXD
+## Copy On Write Demo
 
-Molecule lets you control "everything" so you do not need to do this. We will take a peek under the hood to more closly examine our ZFS backed LXC/LXD installation if we have time.
+Lets take a look at some of the things taking place "under" molecule. In particular here we examine storage usages and COW.
 
 ----
 
@@ -496,7 +559,44 @@ Molecule lets you control "everything" so you do not need to do this. We will ta
 Check our space usage
 
 ```shell
-lxc storage info lxd
+lxc storage list
+```
+
+Our image file
+
+```shell
++---------+-------------+--------+--------------------------------+---------+
+|  NAME   | DESCRIPTION | DRIVER |             SOURCE             | USED BY |
++---------+-------------+--------+--------------------------------+---------+
+| default |             | zfs    | /var/lib/lxd/disks/default.img | 4       |
++---------+-------------+--------+--------------------------------+---------+
+```
+
+----
+
+### Space usage
+
+```shell
+lxc storage info default
+```
+
+Output example:
+
+```shell
+info:
+  description: ""
+  driver: zfs
+  name: default
+  space used: 505.19MB
+  total space: 75.95GB
+used by:
+  containers:
+  - c1
+  images:
+  - d299226f322c9c743bf07a0bfea02a2a1ca018e04350fb9270e94668d1d42dfc
+  - ea1d9641ca09f8d7b55548447493ed808113322401861ab1e09d1017e07d4ebd
+  profiles:
+  - default
 ```
 
 ----
@@ -580,3 +680,5 @@ lxc list
 ```
 
 ----
+
+```
